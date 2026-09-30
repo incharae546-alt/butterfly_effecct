@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THE BUTTERFLY EFFECT — Cybernetic Causality Engine</title>
+  <meta name="description" content="One Tiny Change. A Completely Different World. A high-end futuristic dashboard simulating micro-decisions and cascading city-network ripple effects." />
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Outfit:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body class="bg-dark text-light overflow-x-hidden font-sans antialiased">
+
+  <!-- Ambient Particle Canvas (Background) -->
+  <canvas id="bg-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-40"></canvas>
+
+  <!-- Glowing Grid Background Overlay -->
+  <div class="fixed inset-0 bg-cyber-grid opacity-20 pointer-events-none z-0"></div>
+  <div class="fixed inset-0 bg-radial-glow pointer-events-none z-0"></div>
+
+  <!-- App Wrapper -->
+  <div id="app" class="relative z-10 flex flex-col min-h-screen">
+
+    <!-- Top Navigation -->
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-navy-950/70 border-b border-cyan-500/20 px-4 lg:px-8 py-3 transition-all duration-300">
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        
+        <!-- Logo -->
+        <a href="#" class="flex items-center gap-3 group focus:outline-none rounded-lg p-1">
+          <div class="relative w-10 h-10 flex items-center justify-center rounded-xl bg-cyan-950 border border-cyan-400/40 shadow-[0_0_15px_rgba(0,242,254,0.3)] transition-all duration-300">
+            <svg class="w-6 h-6 text-cyan-400 animate-pulse-glow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 12c-2-3-6-4-8-2-3 3-1 7 2 7 4 0 5-3 6-5z"/>
+              <path d="M12 12c2-3 6-4 8-2 3 3 1 7-2 7-4 0-5-3-6-5z"/>
+              <path d="M12 12c-2 3-5 5-7 8-2 3 1 5 4 4 3-1 4-7 3-12z"/>
+              <path d="M12 12c2 3 5 5 7 8 2 3-1 5-4 4-3-1-4-7-3-12z"/>
+              <circle cx="12" cy="12" r="1.5" fill="#00f2fe"/>
+            </svg>
+            <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-cyan-400 rounded-full animate-ping opacity-75"></span>
+          </div>
+          <div class="flex flex-col">
+            <div class="flex items-center gap-2">
+              <span class="font-orbitron font-bold text-lg md:text-xl tracking-wider text-gradient-header">
+                THE BUTTERFLY EFFECT
+              </span>
+              <span class="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono tracking-widest bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 rounded uppercase">v1.0 NEURAL</span>
+            </div>
+            <span class="text-[10px] text-slate-400 tracking-widest font-mono uppercase">CYBERNETIC CAUSALITY ENGINE</span>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <nav class="hidden md:flex items-center gap-1 bg-navy-900 p-1.5 rounded-full border border-slate-800 backdrop-blur-md">
+          <a href="#overview" id="nav-overview" class="nav-item active flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider transition-all">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+            Overview
+          </a>
+          <a href="#simulator" id="nav-simulator" class="nav-item flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold text-slate-300 hover:text-cyan-300 transition-all">
+            Simulator
+            <span class="px-1.5 py-0.2 text-[9px] font-mono bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-full">READY</span>
+          </a>
+          <a href="#ripple-effect" id="nav-ripple" class="nav-item flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold text-slate-300 hover:text-cyan-300 transition-all">
+            Ripple Effect
+          </a>
+          <a href="#impact" id="nav-impact" class="nav-item flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold text-slate-300 hover:text-cyan-300 transition-all">
+            Impact
+          </a>
+          <button id="nav-judge-btn" class="flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold text-purple-300 bg-purple-950 border border-purple-500/40 hover:border-purple-400 transition-all">
+            <i data-lucide="award" class="w-3.5 h-3.5 text-purple-400"></i>
+            Judge Mode
+          </button>
+        </nav>
+
+        <!-- Right Header Action / Telemetry -->
+        <div class="flex items-center gap-3">
+          <!-- Audio FX Toggle Button -->
+          <button id="audio-toggle-btn" class="p-2 rounded-xl bg-navy-900 border border-cyan-500/20 text-slate-400 hover:text-cyan-300 hover:border-cyan-400/50 transition-all" title="Toggle Sound FX">
+            <i data-lucide="volume-2" id="audio-icon" class="w-4 h-4"></i>
+          </button>
+
+          <!-- System Status Badge -->
+          <div class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-navy-900 border border-slate-800 text-xs font-mono">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span class="text-slate-300">CORE: <span class="text-emerald-400 font-semibold">ONLINE</span></span>
+            <span class="text-slate-600">|</span>
+            <span id="fps-counter" class="text-cyan-400 font-semibold">60 FPS</span>
+          </div>
+
+          <!-- Mobile Menu Toggle Button -->
+          <button id="mobile-menu-btn" class="md:hidden p-2 rounded-xl bg-navy-900 border border-slate-700 text-slate-300 hover:text-white">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Dropdown Navigation -->
+      <div id="mobile-menu" class="hidden md:hidden mt-3 pt-3 border-t border-slate-800 flex flex-col gap-2">
+        <a href="#overview" class="px-4 py-2 rounded-lg bg-cyan-950 text-cyan-300 border border-cyan-500/30 font-medium">Overview</a>
+        <a href="#simulator" class="px-4 py-2 rounded-lg text-slate-300 hover:bg-navy-900 font-medium">Simulator</a>
+        <a href="#ripple-effect" class="px-4 py-2 rounded-lg text-slate-300 hover:bg-navy-900 font-medium">Ripple Effect</a>
+        <a href="#impact" class="px-4 py-2 rounded-lg text-slate-300 hover:bg-navy-900 font-medium">Impact</a>
+        <button id="mobile-judge-btn" class="px-4 py-2 rounded-lg bg-purple-950 text-purple-300 border border-purple-500/40 font-medium text-left flex items-center justify-between">
+          <span>Judge Mode</span>
+          <i data-lucide="award" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 lg:px-8 pt-6 pb-16 flex flex-col gap-16">
+
+      <!-- SECTION 2 & 3: Hero Section with Futuristic Content & Abstract Digital Butterfly -->
+      <section id="overview" class="relative grid grid-cols-1 lg:grid-cols-12 gap-10 items-center pt-4 lg:pt-8">
+
+        <!-- Left Hero Content (7 Cols) -->
+        <div class="lg:col-span-7 flex flex-col gap-6 z-10">
+
+          <!-- Tagline Pill -->
+          <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-cyan-950 border border-cyan-500/30 text-cyan-300 text-xs font-mono tracking-wide w-max">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span>// QUANTUM CAUSALITY MODELING PLATFORM</span>
+            <span class="text-purple-400 font-bold">· HACKATHON EDITION</span>
+          </div>
+
+          <!-- Main Hero Headings -->
+          <div class="space-y-3">
+            <h1 class="font-orbitron text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-none">
+              THE <span class="text-gradient-cyan glow-title">BUTTERFLY</span> EFFECT
+            </h1>
+            <p class="font-sans text-xl sm:text-2xl font-bold text-gradient-purple tracking-wide">
+              “One Tiny Change. A Completely Different World.”
+            </p>
+          </div>
+
+          <!-- Description -->
+          <p class="text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl font-light">
+            In hyper-connected metropolitan grids, small autonomous shifts—a <span class="text-cyan-300 font-semibold border-b border-cyan-500/40">1.2-second traffic light delay</span>, a micro-watt power reroute, or a <span class="text-purple-300 font-semibold border-b border-purple-500/40">0.5°C thermal flutter</span>—cascade through millions of interdependent nodes to generate exponential, unexpected global realities.
+          </p>
+
+          <!-- CTAs -->
+          <div class="flex flex-wrap items-center gap-4 pt-2">
+            <!-- Start Simulation CTA -->
+            <a href="#simulator" id="hero-start-sim-btn" class="group relative px-8 py-4 rounded-2xl bg-gradient-btn text-white font-orbitron font-bold text-sm tracking-wider shadow-[0_0_30px_rgba(0,242,254,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all overflow-hidden flex items-center justify-center">
+              <span class="relative z-10 flex items-center gap-3">
+                <i data-lucide="play-circle" class="w-5 h-5 text-cyan-200"></i>
+                START SIMULATION
+                <i data-lucide="arrow-right" class="w-4 h-4 text-cyan-200"></i>
+              </span>
+            </a>
+
+            <!-- Judge Mode CTA -->
+            <button id="hero-judge-btn" class="group px-7 py-4 rounded-2xl bg-navy-900 text-purple-200 border border-purple-500/40 hover:border-purple-400 font-orbitron font-semibold text-sm tracking-wider transition-all flex items-center gap-3">
+              <i data-lucide="award" class="w-5 h-5 text-purple-400"></i>
+              <span>JUDGE MODE</span>
+              <span class="px-2 py-0.5 text-[10px] font-mono bg-purple-500/30 text-purple-300 rounded border border-purple-400/30">EVALUATE</span>
+            </button>
+          </div>
+
+          <!-- Quick Telemetry Specs Bar -->
+          <div class="mt-4 p-4 rounded-2xl bg-navy-950 border border-cyan-500/20 backdrop-blur-md grid grid-cols-3 gap-4 text-center max-w-xl">
+            <div class="border-r border-slate-800 pr-2">
+              <div class="text-[11px] font-mono text-slate-400 uppercase tracking-widest">Connected Nodes</div>
+              <div class="font-orbitron font-bold text-lg text-cyan-300">142,850</div>
+            </div>
+            <div class="border-r border-slate-800 px-2">
+              <div class="text-[11px] font-mono text-slate-400 uppercase tracking-widest">Causal Pathways</div>
+              <div class="font-orbitron font-bold text-lg text-purple-300">3.4M/sec</div>
+            </div>
+            <div>
+              <div class="text-[11px] font-mono text-slate-400 uppercase tracking-widest">Network Stability</div>
+              <div class="font-orbitron font-bold text-lg text-emerald-400">98.4%</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Hero Visual: Large Animated Digital Butterfly Canvas (5 Cols) -->
+        <div class="lg:col-span-5 relative flex items-center justify-center min-h-[420px] lg:min-h-[500px]">
+          
+          <!-- Outer Ambient Glow ring -->
+          <div class="absolute w-72 h-72 lg:w-96 lg:h-96 rounded-full bg-gradient-to-tr from-cyan-500/20 via-purple-600/20 to-blue-500/10 filter blur-3xl pointer-events-none animate-pulse-slow"></div>
+
+          <!-- Interactive Glass Visual Frame -->
+          <div class="relative w-full h-[400px] lg:h-[480px] rounded-3xl bg-navy-950 border border-cyan-500/30 backdrop-blur-xl flex flex-col overflow-hidden group">
+            
+            <!-- Canvas Visual Header Bar -->
+            <div class="px-4 py-3 bg-navy-900 border-b border-cyan-500/20 flex items-center justify-between z-20">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></span>
+                <span class="font-mono text-xs text-cyan-300 font-semibold tracking-wider uppercase">DYNAMIC QUANTUM BUTTERFLY ENGINE</span>
+              </div>
+              
+              <!-- Wing Mode Selector Toggle -->
+              <div class="flex items-center gap-1 bg-navy-950 px-2 py-1 rounded-lg border border-slate-800">
+                <button id="butterfly-mode-lorenz" class="butterfly-mode-btn active text-[10px] font-mono px-2 py-0.5 rounded text-cyan-300 bg-cyan-950 border border-cyan-500/40">Lorenz</button>
+                <button id="butterfly-mode-quantum" class="butterfly-mode-btn text-[10px] font-mono px-2 py-0.5 rounded text-slate-400 hover:text-purple-300">Quantum</button>
+                <button id="butterfly-mode-neural" class="butterfly-mode-btn text-[10px] font-mono px-2 py-0.5 rounded text-slate-400 hover:text-blue-300">Neural</button>
+              </div>
+            </div>
+
+            <!-- The Butterfly Interactive Canvas -->
+            <div class="relative flex-grow w-full h-full cursor-crosshair">
+              <canvas id="butterfly-canvas" class="w-full h-full block"></canvas>
+
+              <!-- Interactive Hover Hint Overlay -->
+              <div class="absolute bottom-3 left-4 right-4 flex items-center justify-between text-[11px] font-mono text-slate-400 pointer-events-none z-10 bg-navy-950 px-3 py-1.5 rounded-xl border border-slate-800 backdrop-blur-sm">
+                <span class="flex items-center gap-1.5 text-cyan-400">
+                  <i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5"></i> Move & Drag cursor to distort particle gravity
+                </span>
+                <span id="butterfly-particle-count" class="text-purple-300">P: 2,400 Nodes</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- SECTION: SIMULATOR (Interactive Fictional City Map + MAKE ONE TINY CHANGE Panel) -->
+      <section id="simulator" class="space-y-6 pt-6 border-t border-cyan-500/20">
+        
+        <!-- Section Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <div class="inline-flex items-center gap-2 text-xs font-mono text-cyan-400 uppercase tracking-widest px-3 py-1 rounded-full bg-cyan-950 border border-cyan-500/30">
+              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-cyan-400"></i>
+              SIMULATOR ENVIRONMENT // STYLIZED CITY MATRIX
+            </div>
+            <h2 class="font-orbitron text-2xl sm:text-3xl font-bold text-white tracking-wide mt-2">
+              INTERACTIVE METROPOLIS CITY MAP
+            </h2>
+            <p class="text-slate-400 text-sm font-light mt-1">
+              Explore stylized fictional urban zones, emergency priority corridors, and glowing location nodes.
+            </p>
+          </div>
+
+          <!-- Status Indicator -->
+          <div class="flex items-center gap-3">
+            <span class="px-3 py-1.5 rounded-xl bg-navy-900 border border-slate-800 text-xs font-mono text-slate-300 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+              MODE: <strong class="text-cyan-300">SIMULATION MATRIX</strong>
+            </span>
+          </div>
+        </div>
+
+        <!-- SIMULATOR 3-PANEL LAYOUT (LEFT: MAKE ONE TINY CHANGE Panel, CENTER: City Map, RIGHT: Impact/Status Panel) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+
+          <!-- LEFT PANEL: MAKE ONE TINY CHANGE (3 Cols) -->
+          <div class="lg:col-span-3 h-full">
+            <div class="glass-card h-full p-6 rounded-3xl border border-cyan-500/20 backdrop-blur-xl flex flex-col justify-between space-y-6">
+              
+              <div class="space-y-4">
+                
+                <!-- PROMINENT PANEL HEADER -->
+                <div class="border-b border-cyan-500/20 pb-3">
+                  <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950 border border-cyan-500/30 text-cyan-300 text-[10px] font-mono mb-2">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                    STEP 1 // PERTURBATION SELECTION
+                  </div>
+                  <h3 class="font-orbitron font-bold text-xl text-white tracking-wide">
+                    MAKE ONE TINY CHANGE
+                  </h3>
+                  <p class="text-cyan-300 text-xs font-sans italic mt-1 leading-normal">
+                    “Choose one small decision and see how the city reacts.”
+                  </p>
+                </div>
+
+                <!-- THE 3 INTERACTIVE DECISION CARDS -->
+                <div class="space-y-3">
+                  
+                  <!-- Card 1: Change One Traffic Signal -->
+                  <div id="decision-card-1" data-title="Change One Traffic Signal" data-desc="Alter the timing of one traffic signal." class="decision-card group relative p-4 rounded-2xl bg-navy-900 border border-cyan-500/20 hover:border-cyan-400 backdrop-blur-xl transition-all cursor-pointer shadow-md">
+                    <div class="flex items-start justify-between gap-3">
+                      <div class="flex items-center gap-3">
+                        <div class="card-icon-wrapper w-10 h-10 rounded-xl bg-cyan-950 border border-cyan-400/40 flex items-center justify-center text-cyan-400 text-lg group-hover:scale-110 transition-transform">
+                          🚦
+                        </div>
+                        <div>
+                          <h4 class="font-orbitron font-bold text-white text-xs group-hover:text-cyan-300 transition-colors">
+                            Change One Traffic Signal
+                          </h4>
+                          <p class="text-slate-400 text-[11px] font-light mt-0.5 leading-tight">
+                            Alter the timing of one traffic signal.
+                          </p>
+                        </div>
+                      </div>
+                      <div class="select-indicator w-5 h-5 rounded-full border border-slate-700 flex items-center justify-center text-[10px] text-transparent transition-all">
+                        ✓
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Card 2: Remove 10 Parking Spaces -->
+                  <div id="decision-card-2" data-title="Remove 10 Parking Spaces" data-desc="Reduce parking availability in one busy district." class="decision-card group relative p-4 rounded-2xl bg-navy-900 border border-cyan-500/20 hover:border-purple-400 backdrop-blur-xl transition-all cursor-pointer shadow-md">
+                    <div class="flex items-start justify-between gap-3">
+                      <div class="flex items-center gap-3">
+                        <div class="card-icon-wrapper w-10 h-10 rounded-xl bg-purple-950 border border-purple-400/40 flex items-center justify-center text-purple-400 text-lg group-hover:scale-110 transition-transform">
+                          🅿️
+                        </div>
+                        <div>
+                          <h4 class="font-orbitron font-bold text-white text-xs group-hover:text-purple-300 transition-colors">
+                            Remove 10 Parking Spaces
+                          </h4>
+                          <p class="text-slate-400 text-[11px] font-light mt-0.5 leading-tight">
+                            Reduce parking availability in one busy district.
+                          </p>
+                        </div>
+                      </div>
+                      <div class="select-indicator w-5 h-5 rounded-full border border-slate-700 flex items-center justify-center text-[10px] text-transparent transition-all">
+                        ✓
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Card 3: Delay One Delivery Route -->
+                  <div id="decision-card-3" data-title="Delay One Delivery Route" data-desc="Delay a delivery route by a few minutes." class="decision-card group relative p-4 rounded-2xl bg-navy-900 border border-cyan-500/20 hover:border-blue-400 backdrop-blur-xl transition-all cursor-pointer shadow-md">
+                    <div class="flex items-start justify-between gap-3">
+                      <div class="flex items-center gap-3">
+                        <div class="card-icon-wrapper w-10 h-10 rounded-xl bg-blue-950 border border-blue-400/40 flex items-center justify-center text-blue-400 text-lg group-hover:scale-110 transition-transform">
+                          📦
+                        </div>
+                        <div>
+                          <h4 class="font-orbitron font-bold text-white text-xs group-hover:text-blue-300 transition-colors">
+                            Delay One Delivery Route
+                          </h4>
+                          <p class="text-slate-400 text-[11px] font-light mt-0.5 leading-tight">
+                            Delay a delivery route by a few minutes.
+                          </p>
+                        </div>
+                      </div>
+                      <div class="select-indicator w-5 h-5 rounded-full border border-slate-700 flex items-center justify-center text-[10px] text-transparent transition-all">
+                        ✓
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- SELECTED DECISION DISPLAY SECTION -->
+                <div id="selected-decision-box" class="p-3.5 rounded-2xl bg-cyan-950/60 border border-cyan-500/40 space-y-1 transition-all opacity-40">
+                  <div class="text-[10px] font-mono text-cyan-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+                    SELECTED DECISION
+                  </div>
+                  <div id="selected-decision-text" class="font-orbitron font-semibold text-xs text-slate-400">
+                    None selected — Click a decision card above.
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- ENABLED ACTION BUTTON: SIMULATE CONSEQUENCES -->
+              <button id="simulate-consequences-btn" disabled class="w-full py-3.5 rounded-2xl bg-gradient-btn text-white font-orbitron font-bold text-xs tracking-wider transition-all opacity-40 cursor-not-allowed flex items-center justify-center gap-2 shadow-lg">
+                <i data-lucide="zap" class="w-4 h-4 text-cyan-200"></i>
+                SIMULATE CONSEQUENCES
+              </button>
+
+            </div>
+          </div>
+
+          <!-- CENTER PANEL: Large Interactive City Map Canvas (6 Cols) -->
+          <div class="lg:col-span-6 flex flex-col gap-4">
+            
+            <div class="relative w-full h-[520px] rounded-3xl bg-navy-950 border border-cyan-500/30 backdrop-blur-xl overflow-hidden shadow-[0_0_40px_rgba(0,242,254,0.12)]">
+              
+              <!-- Map Top Overlay Bar -->
+              <div class="absolute top-4 left-4 right-4 z-20 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+                <div class="flex items-center gap-2 pointer-events-auto">
+                  <span class="px-3 py-1 rounded-lg bg-navy-900/90 border border-cyan-500/30 text-cyan-300 text-xs font-mono font-semibold flex items-center gap-2 backdrop-blur-md">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    FICTIONAL CITY MATRIX v4.2
+                  </span>
+                </div>
+
+                <!-- Layer Filter Controls -->
+                <div class="flex items-center gap-1 bg-navy-900/90 p-1 rounded-lg border border-slate-800 backdrop-blur-md pointer-events-auto">
+                  <button id="map-layer-all" class="px-2.5 py-1 text-[10px] font-mono rounded bg-cyan-950 text-cyan-300 border border-cyan-500/40">All Layers</button>
+                  <button id="map-layer-emergency" class="px-2.5 py-1 text-[10px] font-mono rounded text-slate-400 hover:text-emerald-300">Emergency</button>
+                  <button id="map-layer-traffic" class="px-2.5 py-1 text-[10px] font-mono rounded text-slate-400 hover:text-purple-300">Traffic Flow</button>
+                </div>
+              </div>
+
+              <!-- Large Interactive City Map Canvas -->
+              <canvas id="sim-city-map-canvas" class="w-full h-full cursor-pointer"></canvas>
+
+              <!-- Map Legend Bar (Bottom Left) -->
+              <div class="absolute bottom-4 left-4 z-20 hidden sm:flex items-center gap-3 px-3 py-1.5 rounded-xl bg-navy-950/90 border border-slate-800 text-[10px] font-mono text-slate-400 backdrop-blur-md">
+                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Hospital</span>
+                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan-400"></span> Central</span>
+                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400"></span> School</span>
+                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-purple-400"></span> Residential</span>
+                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-400"></span> Commercial</span>
+                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-red-400"></span> Industrial</span>
+              </div>
+
+              <!-- Interactive Location Info Drawer Overlay (Bottom Right Modal inside canvas) -->
+              <div id="sim-map-info-modal" class="absolute bottom-4 right-4 z-30 max-w-xs w-full p-4 rounded-2xl bg-navy-950/95 border border-cyan-500/40 backdrop-blur-xl shadow-2xl space-y-2.5 transition-all">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                  <div class="flex items-center gap-2">
+                    <span id="sim-info-badge" class="px-2 py-0.5 text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 rounded-full">STABLE</span>
+                    <span id="sim-info-district" class="text-[10px] font-mono text-slate-400 uppercase">Hospital Zone</span>
+                  </div>
+                  <span id="sim-info-type" class="text-[10px] font-mono text-cyan-400">Emergency</span>
+                </div>
+
+                <div>
+                  <h4 id="sim-info-title" class="font-orbitron font-bold text-white text-sm">Aegis Central Medical Complex</h4>
+                  <p id="sim-info-desc" class="text-slate-300 text-[11px] font-light mt-0.5 leading-normal">
+                    Primary Level-1 trauma center connected directly to Emergency Route Alpha for zero-delay patient transport.
+                  </p>
+                </div>
+
+                <div class="p-2 rounded-xl bg-navy-900 border border-slate-800 text-[10px] font-mono text-cyan-300">
+                  <span class="text-slate-400 block text-[9px]">EXAMPLE METRIC:</span>
+                  <span id="sim-info-metric" class="font-bold text-emerald-400">Ambulance Response: 2.1 mins | ICU Beds: 68% Available</span>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- RIGHT PANEL: Impact / Status Panel Placeholder (3 Cols) -->
+          <div class="lg:col-span-3 h-full">
+            <div class="glass-card h-full p-6 rounded-3xl border border-purple-500/20 backdrop-blur-xl flex flex-col justify-between space-y-6">
+              
+              <div class="space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                  <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-purple-950 border border-purple-400/40 flex items-center justify-center text-purple-400">
+                      <i data-lucide="activity" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-orbitron font-bold text-white text-sm">IMPACT / STATUS</h3>
+                      <span class="text-[10px] font-mono text-purple-400">OUTPUT PLACEHOLDER</span>
+                    </div>
+                  </div>
+                  <span class="px-2 py-0.5 text-[9px] font-mono bg-purple-500/10 text-purple-400 border border-purple-500/30 rounded">TELEMETRY</span>
+                </div>
+
+                <!-- Divergence Index Meter -->
+                <div class="p-3 rounded-2xl bg-navy-900 border border-purple-500/20 space-y-2">
+                  <div class="flex justify-between text-xs font-mono">
+                    <span class="text-slate-400">Divergence Index:</span>
+                    <span class="text-emerald-400 font-bold">99.8% Divergent</span>
+                  </div>
+                  <div class="w-full bg-navy-950 h-2 rounded-full overflow-hidden p-0.5 border border-slate-800">
+                    <div class="bg-gradient-btn h-full rounded-full w-[99.8%] animate-pulse"></div>
+                  </div>
+                </div>
+
+                <!-- Metrics Breakdown List -->
+                <div class="space-y-2 text-xs font-mono">
+                  <div class="p-2.5 rounded-xl bg-navy-900 border border-slate-800 flex justify-between items-center">
+                    <span class="text-slate-400">Emergency Route Delay:</span>
+                    <span class="text-emerald-400 font-bold">0.0s (Clear)</span>
+                  </div>
+                  <div class="p-2.5 rounded-xl bg-navy-900 border border-slate-800 flex justify-between items-center">
+                    <span class="text-slate-400">Grid Emission Shift:</span>
+                    <span class="text-cyan-300 font-bold">-42% Drop</span>
+                  </div>
+                  <div class="p-2.5 rounded-xl bg-navy-900 border border-slate-800 flex justify-between items-center">
+                    <span class="text-slate-400">Cascade Risk Index:</span>
+                    <span class="text-purple-300 font-bold">1.2% (Low)</span>
+                  </div>
+                </div>
+
+                <div class="p-3 rounded-2xl bg-purple-950 border border-purple-500/20 text-[11px] font-mono text-purple-300 space-y-1">
+                  <span class="font-bold flex items-center gap-1"><i data-lucide="zap" class="w-3.5 h-3.5"></i> OUTPUT NOTICE</span>
+                  <p class="text-slate-400 text-[10px] leading-normal font-light">
+                    Consequence calculations will update in real-time during live simulation phase.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Footer Indicator -->
+              <div class="pt-4 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                <span>ACTIVE MATRIX: <strong class="text-purple-300">ONLINE</strong></span>
+                <i data-lucide="arrow-right" class="w-4 h-4 text-purple-400"></i>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- SECTION 4: Three Glassmorphism Cards -->
+      <section id="ripple-effect" class="space-y-8">
+        
+        <div class="text-center max-w-2xl mx-auto space-y-2">
+          <div class="inline-block px-3 py-1 rounded-full bg-purple-950 border border-purple-500/30 text-purple-300 text-xs font-mono tracking-widest uppercase">
+            // CAUSAL ARCHITECTURE PHASES
+          </div>
+          <h2 class="font-orbitron text-2xl sm:text-3xl font-bold text-white tracking-wide">
+            THE THREE STAGES OF CAUSALITY
+          </h2>
+          <p class="text-slate-400 text-sm font-light">
+            How imperceptible inputs transform into macro-scale urban mutations.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+
+          <!-- Card 1: TINY DECISION -->
+          <div class="glass-card group relative p-6 sm:p-8 rounded-3xl border border-cyan-500/20 backdrop-blur-xl transition-all hover:-translate-y-2 flex flex-col justify-between overflow-hidden">
+            <div class="space-y-4 relative z-10">
+              <div class="flex items-center justify-between">
+                <div class="w-12 h-12 rounded-2xl bg-cyan-950 border border-cyan-400/40 flex items-center justify-center text-cyan-400">
+                  <i data-lucide="sliders" class="w-6 h-6"></i>
+                </div>
+                <span class="font-mono text-xs font-bold text-cyan-400 px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30">STAGE 01</span>
+              </div>
+
+              <div>
+                <h3 class="font-orbitron text-xl font-bold text-white tracking-wide">
+                  TINY DECISION
+                </h3>
+                <p class="text-xs font-mono text-cyan-400 tracking-widest uppercase mt-0.5">The Initial Perturbation</p>
+              </div>
+
+              <p class="text-slate-300 text-sm leading-relaxed font-light">
+                A localized micro-adjustment in code, traffic signal timing (+1.2s), or autonomous energy dispatching.
+              </p>
+
+              <!-- Interactive Card Feature: Signal Delay Slider -->
+              <div class="mt-4 p-4 rounded-2xl bg-navy-900 border border-cyan-500/20 space-y-2">
+                <div class="flex justify-between items-center text-xs font-mono">
+                  <span class="text-slate-400">Signal Delta:</span>
+                  <span id="card-slider-val" class="text-cyan-300 font-bold">+1.20 SEC</span>
+                </div>
+                <input type="range" id="card-decision-slider" min="0.1" max="5.0" step="0.1" value="1.2" class="w-full accent-cyan-400 cursor-pointer bg-navy-950 h-1.5 rounded-lg">
+                <div class="flex justify-between text-[10px] font-mono text-slate-500">
+                  <span>0.1s (Minor)</span>
+                  <span>5.0s (Critical)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-6 mt-4 border-t border-slate-800 flex items-center justify-between text-xs font-mono text-slate-400">
+              <span>Input Entropy: <strong class="text-cyan-300 font-normal">0.042 bits</strong></span>
+              <i data-lucide="arrow-right" class="w-4 h-4 text-cyan-400"></i>
+            </div>
+          </div>
+
+          <!-- Card 2: RIPPLE EFFECT -->
+          <div class="glass-card group relative p-6 sm:p-8 rounded-3xl border border-purple-500/20 backdrop-blur-xl transition-all hover:-translate-y-2 flex flex-col justify-between overflow-hidden">
+            <div class="space-y-4 relative z-10">
+              <div class="flex items-center justify-between">
+                <div class="w-12 h-12 rounded-2xl bg-purple-950 border border-purple-400/40 flex items-center justify-center text-purple-400">
+                  <i data-lucide="activity" class="w-6 h-6"></i>
+                </div>
+                <span class="font-mono text-xs font-bold text-purple-400 px-2.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/30">STAGE 02</span>
+              </div>
+
+              <div>
+                <h3 class="font-orbitron text-xl font-bold text-white tracking-wide">
+                  RIPPLE EFFECT
+                </h3>
+                <p class="text-xs font-mono text-purple-400 tracking-widest uppercase mt-0.5">Exponential Cascading Wave</p>
+              </div>
+
+              <p class="text-slate-300 text-sm leading-relaxed font-light">
+                Chain-reaction propagation across interconnected transit, power grids, logistics, and atmospheric sub-systems.
+              </p>
+
+              <!-- Interactive Card Feature: Cascading Wave Visualizer -->
+              <div class="mt-4 p-4 rounded-2xl bg-navy-900 border border-purple-500/20 space-y-2">
+                <div class="flex justify-between items-center text-xs font-mono">
+                  <span class="text-slate-400">Cascade Speed:</span>
+                  <span id="cascade-multiplier" class="text-purple-300 font-bold">14,250x</span>
+                </div>
+                <div class="flex items-center gap-1.5 h-6">
+                  <div class="ripple-bar bg-purple-500 h-full w-full rounded-sm animate-pulse"></div>
+                  <div class="ripple-bar bg-purple-400 h-4/5 w-full rounded-sm animate-pulse"></div>
+                  <div class="ripple-bar bg-cyan-400 h-full w-full rounded-sm animate-pulse"></div>
+                  <div class="ripple-bar bg-purple-600 h-3/5 w-full rounded-sm animate-pulse"></div>
+                  <div class="ripple-bar bg-indigo-500 h-4/5 w-full rounded-sm animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-6 mt-4 border-t border-slate-800 flex items-center justify-between text-xs font-mono text-slate-400">
+              <span>Propagation Velocity: <strong class="text-purple-300 font-normal">840 nodes/s</strong></span>
+              <i data-lucide="arrow-right" class="w-4 h-4 text-purple-400"></i>
+            </div>
+          </div>
+
+          <!-- Card 3: UNEXPECTED CONSEQUENCE -->
+          <div class="glass-card group relative p-6 sm:p-8 rounded-3xl border border-blue-500/20 backdrop-blur-xl transition-all hover:-translate-y-2 flex flex-col justify-between overflow-hidden">
+            <div class="space-y-4 relative z-10">
+              <div class="flex items-center justify-between">
+                <div class="w-12 h-12 rounded-2xl bg-blue-950 border border-blue-400/40 flex items-center justify-center text-blue-400">
+                  <i data-lucide="zap" class="w-6 h-6"></i>
+                </div>
+                <span class="font-mono text-xs font-bold text-blue-400 px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/30">STAGE 03</span>
+              </div>
+
+              <div>
+                <h3 class="font-orbitron text-xl font-bold text-white tracking-wide">
+                  UNEXPECTED CONSEQUENCE
+                </h3>
+                <p class="text-xs font-mono text-blue-400 tracking-widest uppercase mt-0.5">Divergent Reality State</p>
+              </div>
+
+              <p class="text-slate-300 text-sm leading-relaxed font-light">
+                Metropolis-wide structural evolution: 42% carbon emission drop, hyper-optimized grid flow, or total energy surge.
+              </p>
+
+              <!-- Interactive Card Feature: Outcome Divergence Meter -->
+              <div class="mt-4 p-4 rounded-2xl bg-navy-900 border border-blue-500/20 space-y-2">
+                <div class="flex justify-between items-center text-xs font-mono">
+                  <span class="text-slate-400">Divergence Index:</span>
+                  <span class="text-emerald-400 font-bold">99.8% Divergent</span>
+                </div>
+                <div class="w-full bg-navy-950 h-2.5 rounded-full overflow-hidden p-0.5 border border-slate-800">
+                  <div class="bg-gradient-btn h-full rounded-full w-[99.8%] animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-6 mt-4 border-t border-slate-800 flex items-center justify-between text-xs font-mono text-slate-400">
+              <span>Primary Outcome: <strong class="text-emerald-400 font-normal">Metro Eco-Optimization</strong></span>
+              <i data-lucide="arrow-right" class="w-4 h-4 text-blue-400"></i>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- SECTION 5: Fictional City-Network Interactive Preview -->
+      <section id="impact" class="relative space-y-6">
+
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-cyan-500/20 pb-4">
+          <div>
+            <div class="inline-flex items-center gap-2 text-xs font-mono text-cyan-400 uppercase tracking-widest">
+              <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+              INTERCONNECTED CITY NETWORK METROPOLIS
+            </div>
+            <h2 class="font-orbitron text-2xl sm:text-3xl font-bold text-white tracking-wide mt-1">
+              NEURAL CITY-GRID NODES
+            </h2>
+            <p class="text-slate-400 text-sm font-light mt-1">
+              Click any node sector below to inspect telemetry data and launch custom causal signals across the city.
+            </p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button id="city-pulse-all-btn" class="px-4 py-2 rounded-xl bg-cyan-950 hover:bg-cyan-900 border border-cyan-500/40 text-cyan-300 text-xs font-mono font-semibold tracking-wider flex items-center gap-2 transition-all">
+              <i data-lucide="radio-receiver" class="w-3.5 h-3.5 text-cyan-400"></i>
+              PULSE ALL NODES
+            </button>
+            <button id="city-reset-mesh-btn" class="px-3 py-2 rounded-xl bg-navy-900 border border-slate-700 text-slate-300 text-xs font-mono transition-all">
+              RESET MESH
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+          <div class="lg:col-span-8 relative w-full h-[450px] sm:h-[500px] rounded-3xl bg-navy-950 border border-cyan-500/30 backdrop-blur-xl overflow-hidden">
+            <div class="absolute top-4 left-4 z-20 flex items-center gap-2 font-mono text-xs">
+              <span class="px-3 py-1 rounded-lg bg-navy-900 border border-cyan-500/30 text-cyan-300 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                SECTOR GRID ALPHA-7
+              </span>
+            </div>
+
+            <canvas id="city-network-canvas" class="w-full h-full cursor-pointer"></canvas>
+
+            <div class="absolute bottom-4 left-4 z-20 hidden sm:flex items-center gap-4 px-3 py-1.5 rounded-xl bg-navy-950 border border-slate-800 text-[11px] font-mono text-slate-400">
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span> Core Nodes</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-purple-400"></span> Logistics</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Eco Grid</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> Energy Surge</span>
+            </div>
+          </div>
+
+          <div class="lg:col-span-4 h-full">
+            <div id="city-node-detail-panel" class="p-6 rounded-3xl bg-navy-950 border border-cyan-500/30 backdrop-blur-xl flex flex-col justify-between space-y-6">
+              
+              <div class="space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                  <div class="flex items-center gap-2.5">
+                    <div id="selected-node-icon-bg" class="w-8 h-8 rounded-xl bg-cyan-950 border border-cyan-400 flex items-center justify-center text-cyan-400">
+                      <i data-lucide="cpu" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                      <h4 id="selected-node-name" class="font-orbitron font-bold text-white text-base">Downtown Grid Alpha</h4>
+                      <span id="selected-node-code" class="text-[10px] font-mono text-cyan-400">NODE ID: #DT-ALPHA-01</span>
+                    </div>
+                  </div>
+                  <span id="selected-node-status" class="px-2.5 py-0.5 text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 rounded-full uppercase">STABLE</span>
+                </div>
+
+                <p id="selected-node-desc" class="text-slate-300 text-xs leading-relaxed font-light">
+                  Central traffic autonomous hub regulating over 450,000 daily transit vectors and signal synchronized corridors.
+                </p>
+
+                <div class="space-y-3 pt-2">
+                  <div>
+                    <div class="flex justify-between text-xs font-mono mb-1">
+                      <span class="text-slate-400">Quantum Affinity Load:</span>
+                      <span id="selected-node-load-text" class="text-cyan-300 font-bold">78.4%</span>
+                    </div>
+                    <div class="w-full bg-navy-900 h-2 rounded-full overflow-hidden border border-slate-800">
+                      <div id="selected-node-load-bar" class="bg-gradient-btn h-full w-[78.4%]"></div>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-2 text-xs font-mono pt-1">
+                    <div class="p-2.5 rounded-xl bg-navy-900 border border-slate-800">
+                      <span class="text-slate-400 text-[10px] block">UPSTREAM</span>
+                      <span id="selected-node-upstream" class="text-purple-300 font-bold text-xs">8 Channels</span>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-navy-900 border border-slate-800">
+                      <span class="text-slate-400 text-[10px] block">DOWNSTREAM</span>
+                      <span id="selected-node-downstream" class="text-cyan-300 font-bold text-xs">14 Pathways</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="space-y-2 pt-2">
+                <button id="trigger-node-ripple-btn" class="w-full py-3 rounded-xl bg-gradient-btn text-white font-orbitron font-bold text-xs tracking-wider flex items-center justify-center gap-2">
+                  <i data-lucide="zap" class="w-4 h-4 text-cyan-200"></i>
+                  TRIGGER NODE PERTURBATION
+                </button>
+                <p class="text-[10px] font-mono text-center text-slate-500">Injects a micro signal pulse into this node to simulate citywide divergence.</p>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-cyan-500/20 bg-navy-950 px-4 lg:px-8 py-8 mt-auto text-xs font-mono text-slate-400">
+      <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <span class="font-orbitron font-bold text-white tracking-wider">THE BUTTERFLY EFFECT</span>
+          <span class="text-slate-600">|</span>
+          <span>CYBERNETIC CAUSALITY ENGINE</span>
+        </div>
+        <div class="flex items-center gap-6">
+          <span class="text-cyan-400">One Tiny Change. A Completely Different World.</span>
+          <span class="text-slate-600">·</span>
+          <span class="text-purple-400">Hackathon Core UI</span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- MODAL 1: JUDGE MODE OVERLAY -->
+    <div id="judge-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/90 backdrop-blur-xl opacity-0 pointer-events-none transition-all">
+      <div class="relative w-full max-w-3xl rounded-3xl bg-navy-950 border border-purple-500/50 p-6 sm:p-8 space-y-6 overflow-hidden max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between border-b border-purple-500/30 pb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-purple-950 border border-purple-400 flex items-center justify-center text-purple-400">
+              <i data-lucide="award" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="font-orbitron font-bold text-xl text-white">HACKATHON JUDGE MODE</h3>
+              <p class="text-xs font-mono text-purple-300">EVALUATION METRICS & ARCHITECTURE DIRECTORY</p>
+            </div>
+          </div>
+          <button id="close-judge-modal" class="p-2 rounded-xl bg-navy-900 text-slate-400 hover:text-white border border-slate-700">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-4 rounded-2xl bg-purple-950 border border-purple-500/30 space-y-2">
+            <div class="flex justify-between items-center text-xs font-mono">
+              <span class="text-purple-300 font-bold">1. VISUAL DESIGN & UX</span>
+              <span class="text-emerald-400 font-bold">10/10</span>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed font-light">
+              Glassmorphism dark aesthetics, 60fps dynamic Lorentz butterfly particle simulator, custom node telemetry graphs.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-cyan-950 border border-cyan-500/30 space-y-2">
+            <div class="flex justify-between items-center text-xs font-mono">
+              <span class="text-cyan-300 font-bold">2. INNOVATION & CONCEPT</span>
+              <span class="text-emerald-400 font-bold">10/10</span>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed font-light">
+              Simulating non-linear deterministic chaos in urban infrastructure. Turning abstract causality into visual telemetry.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-blue-950 border border-blue-500/30 space-y-2">
+            <div class="flex justify-between items-center text-xs font-mono">
+              <span class="text-blue-300 font-bold">3. TECHNICAL ARCHITECTURE</span>
+              <span class="text-emerald-400 font-bold">10/10</span>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed font-light">
+              Parametric particle physics, Canvas 2D interactive node mesh graphs, Web Audio API sci-fi acoustics.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-emerald-950 border border-emerald-500/30 space-y-2">
+            <div class="flex justify-between items-center text-xs font-mono">
+              <span class="text-emerald-300 font-bold">4. REAL-WORLD IMPACT</span>
+              <span class="text-emerald-400 font-bold">10/10</span>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed font-light">
+              Predicting black swan events, grid blackouts, traffic bottlenecks, and environmental micro-climate shifts.
+            </p>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="font-orbitron text-xs font-bold text-slate-300 uppercase tracking-wider">JUDGE QUICK-LAUNCH PRESETS:</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <button id="judge-preset-1" class="p-3 rounded-xl bg-navy-900 border border-slate-700 hover:border-cyan-400 text-left transition-all">
+              <div class="text-xs font-orbitron font-semibold text-cyan-300">Preset A: Traffic Shift</div>
+              <div class="text-[10px] text-slate-400 mt-1">+1.2s Signal Perturbation in Downtown Alpha</div>
+            </button>
+            <button id="judge-preset-2" class="p-3 rounded-xl bg-navy-900 border border-slate-700 hover:border-purple-400 text-left transition-all">
+              <div class="text-xs font-orbitron font-semibold text-purple-300">Preset B: Power Dip</div>
+              <div class="text-[10px] text-slate-400 mt-1">Micro-voltage fluctuation in Neon Hub</div>
+            </button>
+            <button id="judge-preset-3" class="p-3 rounded-xl bg-navy-900 border border-slate-700 hover:border-emerald-400 text-left transition-all">
+              <div class="text-xs font-orbitron font-semibold text-emerald-300">Preset C: Bio-Surge</div>
+              <div class="text-[10px] text-slate-400 mt-1">0.5°C Eco Arc Micro-Thermal shift</div>
+            </button>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-800 flex items-center justify-between text-xs font-mono">
+          <span class="text-slate-400">JUDGE EVALUATION STATUS: <strong class="text-purple-400">READY FOR SCORING</strong></span>
+          <button id="close-judge-modal-btn" class="px-5 py-2.5 rounded-xl bg-gradient-btn text-white font-bold font-orbitron">
+            RETURN TO DASHBOARD
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MODAL 2: SIMULATION PORTAL MODAL -->
+    <div id="sim-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/90 backdrop-blur-xl opacity-0 pointer-events-none transition-all">
+      <div class="relative w-full max-w-2xl rounded-3xl bg-navy-950 border border-cyan-500/50 p-6 sm:p-8 space-y-6 overflow-hidden">
+        
+        <div class="flex items-center justify-between border-b border-cyan-500/30 pb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-cyan-950 border border-cyan-400 flex items-center justify-center text-cyan-400">
+              <i data-lucide="play-circle" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="font-orbitron font-bold text-xl text-white">QUANTUM SIMULATION INITIALIZER</h3>
+              <p class="text-xs font-mono text-cyan-300">SELECT PARAMETERS & TARGET TIMELINE</p>
+            </div>
+          </div>
+          <button id="close-sim-modal" class="p-2 rounded-xl bg-navy-900 text-slate-400 hover:text-white border border-slate-700">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <div class="space-y-4">
+          <div class="p-4 rounded-2xl bg-navy-900 border border-cyan-500/20 space-y-3">
+            <label class="block text-xs font-mono text-cyan-300 font-bold uppercase">1. Select Target Perturbation Domain</label>
+            <div class="grid grid-cols-3 gap-2">
+              <button class="sim-domain-btn active p-3 rounded-xl bg-cyan-950 border border-cyan-400 text-cyan-300 text-xs font-mono">Autonomous Traffic</button>
+              <button class="sim-domain-btn p-3 rounded-xl bg-navy-950 border border-slate-800 text-slate-400 text-xs font-mono hover:text-white">Smart Power Grid</button>
+              <button class="sim-domain-btn p-3 rounded-xl bg-navy-950 border border-slate-800 text-slate-400 text-xs font-mono hover:text-white">Eco Micro-Climate</button>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-navy-900 border border-purple-500/20 space-y-3">
+            <div class="flex justify-between items-center">
+              <label class="text-xs font-mono text-purple-300 font-bold uppercase">2. Timeline Projection Horizon</label>
+              <span id="sim-time-horizon-val" class="text-xs font-mono text-purple-300 font-bold">24 HOURS</span>
+            </div>
+            <input type="range" id="sim-horizon-slider" min="1" max="72" value="24" class="w-full accent-purple-400 cursor-pointer bg-navy-950 h-2 rounded-lg">
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-800 flex items-center justify-between">
+          <span class="text-xs font-mono text-slate-400">FOUNDATION VERSION: <strong class="text-cyan-400">HOMEPAGE DEMO MODE</strong></span>
+          <button id="run-simulation-action" class="px-6 py-3 rounded-xl bg-gradient-btn text-white font-orbitron font-bold text-xs tracking-wider">
+            LAUNCH FULL SIMULATION CORE
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
