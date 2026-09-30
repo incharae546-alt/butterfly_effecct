@@ -192,14 +192,20 @@ function resize() {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
+const CITY_FPS = 30;
+const CITY_INTERVAL = 1000 / CITY_FPS;
+let cityLastFrame = 0;
+
 function startLoop() {
   if (animationFrameId) cancelAnimationFrame(animationFrameId);
 
   let pulseTime = 0;
 
-  function render() {
+  function render(timestamp) {
     animationFrameId = requestAnimationFrame(render);
     if (document.hidden || !ctx || width === 0 || height === 0) return;
+    if (timestamp - cityLastFrame < CITY_INTERVAL) return;
+    cityLastFrame = timestamp;
 
     pulseTime += 0.03;
 

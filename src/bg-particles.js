@@ -50,19 +50,20 @@ export function initBgParticles(canvasElement) {
     particles.push(new AmbientParticle());
   }
 
-  function loop() {
+  const BG_INTERVAL = 1000 / 30;
+  let bgLastFrame = 0;
+
+  function loop(timestamp) {
     animId = requestAnimationFrame(loop);
     if (!ctx || width === 0 || height === 0) return;
+    if (timestamp - bgLastFrame < BG_INTERVAL) return;
+    bgLastFrame = timestamp;
 
     ctx.clearRect(0, 0, width, height);
-
-    particles.forEach(p => {
-      p.update();
-      p.draw();
-    });
+    particles.forEach(p => { p.update(); p.draw(); });
   }
 
-  loop();
+  loop(0);
 }
 
 function resize() {

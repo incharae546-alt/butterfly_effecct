@@ -1,14 +1,13 @@
-import { createIcons, Award, PlayCircle, ArrowRight, Sliders, Activity, Zap, Share2, RadioReceiver, Cpu, Ship, Leaf, Navigation, Sun, MousePointerClick, Volume2, VolumeX, Menu, X, MapPin, Info } from 'lucide';
+import { createIcons, PlayCircle, ArrowRight, Sliders, Activity, Zap, Share2, RadioReceiver, Cpu, Ship, Leaf, Navigation, Sun, MousePointerClick, Volume2, VolumeX, Menu, X, MapPin } from 'lucide';
 import { initBgParticles } from './bg-particles.js';
 import { initButterflyCanvas, setButterflyMode } from './butterfly-canvas.js';
 import { initCityNetworkCanvas, cityNodesData, triggerNodePulse, pulseAllNodes } from './city-network.js';
 import { initSimCityMap, cityLocationsData } from './sim-city-map.js';
-import { toggleAudio, playBeep, playPulseSound, playLaunchSound } from './audio.js';
+import { toggleAudio, playBeep, playPulseSound } from './audio.js';
 
 // Initialize Lucide Icons
 createIcons({
   icons: {
-    Award,
     PlayCircle,
     ArrowRight,
     Sliders,
@@ -26,8 +25,7 @@ createIcons({
     VolumeX,
     Menu,
     X,
-    MapPin,
-    Info
+    MapPin
   }
 });
 
@@ -171,79 +169,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const selectedNameEl = document.getElementById('selected-node-name');
       const selectedNode = cityNodesData.find(n => n.name === selectedNameEl?.textContent) || cityNodesData[0];
       triggerNodePulse(selectedNode.id);
-    });
-  }
-
-  // 10. Judge Mode & Simulation Modal Handlers
-  const judgeModal = document.getElementById('judge-modal');
-  const simModal = document.getElementById('sim-modal');
-  const navJudgeBtn = document.getElementById('nav-judge-btn');
-  const heroJudgeBtn = document.getElementById('hero-judge-btn');
-  const mobileJudgeBtn = document.getElementById('mobile-judge-btn');
-  const closeJudgeBtn = document.getElementById('close-judge-modal');
-  const closeJudgeBtn2 = document.getElementById('close-judge-modal-btn');
-  const closeSimBtn = document.getElementById('close-sim-modal');
-  const runSimAction = document.getElementById('run-simulation-action');
-
-  function openJudgeModal() {
-    if (judgeModal) {
-      judgeModal.classList.remove('opacity-0', 'pointer-events-none');
-      playBeep(900, 0.12);
-    }
-  }
-
-  function closeJudgeModal() {
-    if (judgeModal) {
-      judgeModal.classList.add('opacity-0', 'pointer-events-none');
-      playBeep(450, 0.08);
-    }
-  }
-
-  function closeSimModal() {
-    if (simModal) {
-      simModal.classList.add('opacity-0', 'pointer-events-none');
-    }
-  }
-
-  if (navJudgeBtn) navJudgeBtn.addEventListener('click', openJudgeModal);
-  if (heroJudgeBtn) heroJudgeBtn.addEventListener('click', openJudgeModal);
-  if (mobileJudgeBtn) mobileJudgeBtn.addEventListener('click', openJudgeModal);
-  if (closeJudgeBtn) closeJudgeBtn.addEventListener('click', closeJudgeModal);
-  if (closeJudgeBtn2) closeJudgeBtn2.addEventListener('click', closeJudgeModal);
-  if (closeSimBtn) closeSimBtn.addEventListener('click', closeSimModal);
-
-  // Close modals on Backdrop Click & ESC Key Press
-  [judgeModal, simModal].forEach(modal => {
-    if (!modal) return;
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.classList.add('opacity-0', 'pointer-events-none');
-      }
-    });
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      if (judgeModal) judgeModal.classList.add('opacity-0', 'pointer-events-none');
-      if (simModal) simModal.classList.add('opacity-0', 'pointer-events-none');
-    }
-  });
-
-  // Judge Presets
-  const preset1 = document.getElementById('judge-preset-1');
-  const preset2 = document.getElementById('judge-preset-2');
-  const preset3 = document.getElementById('judge-preset-3');
-
-  if (preset1) preset1.addEventListener('click', () => { closeJudgeModal(); updateNodeTelemetrySidebar(cityNodesData[0]); triggerNodePulse(cityNodesData[0].id); });
-  if (preset2) preset2.addEventListener('click', () => { closeJudgeModal(); updateNodeTelemetrySidebar(cityNodesData[4]); triggerNodePulse(cityNodesData[4].id); });
-  if (preset3) preset3.addEventListener('click', () => { closeJudgeModal(); updateNodeTelemetrySidebar(cityNodesData[2]); triggerNodePulse(cityNodesData[2].id); });
-
-  if (runSimAction) {
-    runSimAction.addEventListener('click', () => {
-      playLaunchSound();
-      closeSimModal();
-      const simSection = document.getElementById('simulator');
-      if (simSection) simSection.scrollIntoView({ behavior: 'smooth' });
     });
   }
 

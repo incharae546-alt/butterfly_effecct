@@ -315,8 +315,8 @@ body {
   text-shadow: 0 0 15px rgba(0, 242, 254, 0.8), 0 0 30px rgba(0, 242, 254, 0.4);
 }
 
-.backdrop-blur-md { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-.backdrop-blur-xl { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+.backdrop-blur-md { backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.backdrop-blur-xl { backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
 
 .bg-cyber-grid {
   background-image: 
@@ -330,9 +330,8 @@ body {
 }
 
 .glass-card {
-  background: rgba(6, 11, 30, 0.65);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background: rgba(6, 11, 30, 0.85);
+  /* backdrop-filter removed — causes GPU freeze with animated canvases */
 }
 
 /* Decision Card Interactive Selection Styling */
@@ -402,9 +401,13 @@ body {
 .cursor-crosshair { cursor: crosshair; }
 .pointer-events-none { pointer-events: none; }
 
+.opacity-0 { opacity: 0 !important; }
 .opacity-40 { opacity: 0.4; }
 .opacity-90 { opacity: 0.9; }
 .opacity-100 { opacity: 1; }
+
+/* Modal overlay background (was missing — caused modal to show no backdrop) */
+.bg-navy-950\/90 { background-color: rgba(6, 11, 30, 0.92); }
 
 button {
   cursor: pointer;

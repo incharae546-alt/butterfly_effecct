@@ -344,14 +344,20 @@ function resize() {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
+const SIM_FPS = 30;
+const SIM_INTERVAL = 1000 / SIM_FPS;
+let simLastFrame = 0;
+
 function startLoop() {
   if (animId) cancelAnimationFrame(animId);
 
   let pulseTimer = 0;
 
-  function render() {
+  function render(timestamp) {
     animId = requestAnimationFrame(render);
     if (!ctx || width === 0 || height === 0) return;
+    if (timestamp - simLastFrame < SIM_INTERVAL) return;
+    simLastFrame = timestamp;
 
     pulseTimer += 0.04;
 
@@ -426,20 +432,25 @@ function startLoop() {
       ctx.shadowBlur = 0;
     });
 
+    // Batch traffic dots by color to avoid per-dot shadowBlur
+    const dotGroups = {};
     trafficDots.forEach(dot => {
       dot.update();
-      const pos = dot.getPosition(width, height);
-
-      ctx.fillStyle = dot.color;
-      ctx.shadowColor = dot.color;
-      ctx.shadowBlur = 8;
-
-      ctx.beginPath();
-      ctx.arc(pos.x, pos.y, 3, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.shadowBlur = 0;
+      if (!dotGroups[dot.color]) dotGroups[dot.color] = [];
+      dotGroups[dot.color].push(dot.getPosition(width, height));
     });
+    for (const color in dotGroups) {
+      ctx.fillStyle = color;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 6;
+      ctx.beginPath();
+      dotGroups[color].forEach(pos => {
+        ctx.moveTo(pos.x + 3, pos.y);
+        ctx.arc(pos.x, pos.y, 3, 0, Math.PI * 2);
+      });
+      ctx.fill();
+    }
+    ctx.shadowBlur = 0;
 
     cityLocationsData.forEach(loc => {
       const lx = loc.relX * width;
